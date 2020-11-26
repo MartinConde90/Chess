@@ -2,7 +2,7 @@ class Tablero{
 
     constructor(){
          
-        this.piezas = new Piezas();
+        //this.piezas = new Piezas();
 
         this.seleccion = ""; //nombre pieza
         
@@ -46,16 +46,16 @@ class Tablero{
             if(filas.includes(i)){
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div style="background-color: white" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" >'+(x*2+1) + '-' + (i-1)+'</div>';
-                    tablero.innerHTML +='<div style="background-color: grey" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="B" style="background-color: white" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" >'+(x*2+1) + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="N" style="background-color: grey" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
                     x--;
                 }
             }
             else{
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div style="background-color: grey" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+(x*2+1) + '-' + (i-1)+'</div>';
-                    tablero.innerHTML +='<div style="background-color: white" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="N" style="background-color: grey" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+(x*2+1) + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="B" style="background-color: white" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
                     x--;
                 }
             }
@@ -107,6 +107,7 @@ class Tablero{
             
             this.segmov = elemento;
             this.cadena2 = elemento.id;
+            
             this.caracter3 = this.cadena2.charAt(0);
             this.caracter4 = this.cadena2.charAt(2);
 
@@ -114,7 +115,7 @@ class Tablero{
             
 
             if(this.comprobarMov(this.figuraselecc1.color, this.figuraselecc2.color)){
-                if(this.casillas[this.caracter1][this.caracter2].mover(this.cadena1,this.cadena2,this.figuraselecc1.color)){
+                if(this.casillas[this.caracter1][this.caracter2].movPos(this.cadena1,this.cadena2,this.figuraselecc2.color)){
                     let figuraMuerte = "pieza" + this.figuraselecc2.color;
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
 
@@ -168,6 +169,45 @@ class Piezas{
         if(this.color == "N")
             return this.directorioN + this.piezaN;  
     }
+
+    movdiag(validar,c1,c2,c3,c4){
+        if(c1<c3){
+            if(c2>c4)
+                return this.comprodiag(validar,c1,c2,c3,c4);
+            if(c2<c4){
+                validar = false;
+                return this.comprodiag(validar,c1,c2,c3,c4);  
+            }
+        }
+        if(c1>c3){
+            if(c2>c4){
+                validar = false;
+                return this.comprodiag(validar,c1,c2,c3,c4);
+            }
+            if(c2<c4)
+                return this.comprodiag(validar,c1,c2,c3,c4);
+        }  
+    }
+
+    comprodiag(validar,c1,c2,c3,c4){
+        
+            if(validar){
+                if((Number(c1)+Number(c2)) == (Number(c3)+Number(c4)))
+                    return true;
+            }
+            else{
+                if((Number(c1)-Number(c2)) == (Number(c3)-Number(c4)))
+                    return true;
+            }
+            return false;   
+    }
+
+    movlog(posini1,posini2,posIni1,posIni2){
+        if(posini1 == posini2)
+            return true
+        if(posIni1 == posIni2)
+            return true
+    }
 }
 
 class Peon extends Piezas{
@@ -176,35 +216,34 @@ class Peon extends Piezas{
         this.color = color;
         this.piezaB = "peonB.png";
         this.piezaN = "peonN.png";
+        this.desplazamiento = 1;
+        this.posIni = "1";
+        this.color2 = "N";
+        
+        if(color == 'N') {
+            this.desplazamiento = -1;
+            this.posIni = "6";
+            this.color2 = "B";
+        }
     }
 
-    mover(posicion1,posicion2,color){
-        if(color == "B"){
+    movPos(posicion1,posicion2,color2){
             let posIni = posicion1.slice(0,1);
-            let posnew = (Number(posIni)+1) + posicion1.slice(1,3);
-            let posnew2 = (Number(posIni)+2) + posicion1.slice(1,3);
-            //console.log(posIni);
-            if(posIni == "1"){
-                if(posicion2 == posnew || posicion2 == posnew2)
-                return true
-            }
+            let posnew = (Number(posIni)+ this.desplazamiento + posicion1.slice(1,3));
+            let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
+            let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
+            let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
 
-            if(posicion2 == posnew)
-                return true;
-        }
-        if(color == "N"){
-            let posIni = posicion1.slice(0,1);
-            let posnew = (Number(posIni)-1) + posicion1.slice(1,3);
-            let posnew2 = (Number(posIni)-2) + posicion1.slice(1,3);
-            //console.log(posIni);
-            if(posIni == "6"){
-                if(posicion2 == posnew || posicion2 == posnew2)
+            if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
                 return true
             }
             if(posicion2 == posnew)
                 return true;
+            
+            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI))
+                return true;
         }
-    }
+
 }
 
 class Torre extends Piezas{
@@ -214,6 +253,18 @@ class Torre extends Piezas{
         this.piezaB = "torreB.png";
         this.piezaN = "torreN.png";
     } 
+
+    movPos(posicion1,posicion2,color2){
+        let c1 = posicion1.slice(0,1);
+        let c2 = posicion1.slice(2,3);
+
+        let c3 = posicion2.slice(0,1);
+        let c4 = posicion2.slice(2,3);
+
+        return this.movlog(c1,c3,c2,c4);
+        
+
+    }
 }
 
 class Caballo extends Piezas{
@@ -223,6 +274,7 @@ class Caballo extends Piezas{
         this.piezaB = "caballoB.png";
         this.piezaN = "caballoN.png";
     }
+
 }
 
 class Alfil extends Piezas{
@@ -231,7 +283,20 @@ class Alfil extends Piezas{
         this.color = color;
         this.piezaB = "alfilB.png";
         this.piezaN = "alfilN.png";
+        
     }
+
+    movPos(posicion1,posicion2,color2){
+        let c1 = posicion1.slice(0,1);
+        let c2 = posicion1.slice(2,3);
+
+        let c3 = posicion2.slice(0,1);
+        let c4 = posicion2.slice(2,3);
+        let validar = true;
+
+        return this.movdiag(validar,c1,c2,c3,c4); 
+    }
+
 }
 
 class Reina extends Piezas{
@@ -240,6 +305,19 @@ class Reina extends Piezas{
         this.color = color;
         this.piezaB = "reinaB.png";
         this.piezaN = "reinaN.png";
+    }
+
+    movPos(posicion1,posicion2,color2){
+        let c1 = posicion1.slice(0,1);
+        let c2 = posicion1.slice(2,3);
+
+        let c3 = posicion2.slice(0,1);
+        let c4 = posicion2.slice(2,3);
+        let validar = true;
+        
+        return this.movdiag(validar,c1,c2,c3,c4); 
+
+        
     }
 }
 
