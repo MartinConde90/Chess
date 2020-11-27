@@ -114,7 +114,7 @@ class Tablero{
             this.figuraselecc2 = this.casillas[this.caracter3][this.caracter4];
             
 
-            if(this.comprobarMov(this.figuraselecc1.color, this.figuraselecc2.color)){
+            if(this.comprobarMov(this.figuraselecc1.color, this.figuraselecc2.color,this.cadena1,this.cadena2)){
                 if(this.casillas[this.caracter1][this.caracter2].movPos(this.cadena1,this.cadena2,this.figuraselecc2.color)){
                     let figuraMuerte = "pieza" + this.figuraselecc2.color;
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
@@ -134,8 +134,11 @@ class Tablero{
         }
     }
 
-    comprobarMov(elemento, elemento2){
-        if(elemento == elemento2 ){
+    comprobarMov(color1, color2,posicion1,posicion2){
+        console.log(posicion1);
+        console.log(posicion2);
+        
+        if(color1 == color2 ){
             this.cambiofig = true;
             this.mover(this.segmov);
         }
@@ -173,23 +176,23 @@ class Piezas{
     movdiag(validar,c1,c2,c3,c4){
         if(c1<c3){
             if(c2>c4)
-                return this.comprodiag(validar,c1,c2,c3,c4);
+                return this.comprobdiag(validar,c1,c2,c3,c4);
             if(c2<c4){
                 validar = false;
-                return this.comprodiag(validar,c1,c2,c3,c4);  
+                return this.comprobdiag(validar,c1,c2,c3,c4);  
             }
         }
         if(c1>c3){
             if(c2>c4){
                 validar = false;
-                return this.comprodiag(validar,c1,c2,c3,c4);
+                return this.comprobdiag(validar,c1,c2,c3,c4);
             }
             if(c2<c4)
-                return this.comprodiag(validar,c1,c2,c3,c4);
+                return this.comprobdiag(validar,c1,c2,c3,c4);
         }  
     }
 
-    comprodiag(validar,c1,c2,c3,c4){
+    comprobdiag(validar,c1,c2,c3,c4){
         
             if(validar){
                 if((Number(c1)+Number(c2)) == (Number(c3)+Number(c4)))
@@ -202,7 +205,7 @@ class Piezas{
             return false;   
     }
 
-    movlog(posini1,posini2,posIni1,posIni2){
+    movlong(posini1,posini2,posIni1,posIni2){
         if(posini1 == posini2)
             return true
         if(posIni1 == posIni2)
@@ -261,7 +264,7 @@ class Torre extends Piezas{
         let c3 = posicion2.slice(0,1);
         let c4 = posicion2.slice(2,3);
 
-        return this.movlog(c1,c3,c2,c4);
+        return this.movlong(c1,c3,c2,c4);
         
 
     }
@@ -275,6 +278,19 @@ class Caballo extends Piezas{
         this.piezaN = "caballoN.png";
     }
 
+    movPos(posicion1,posicion2,color2){
+        let c1 = posicion1.slice(0,1);
+        let c2 = posicion1.slice(2,3);
+
+        let c3 = posicion2.slice(0,1);
+        let c4 = posicion2.slice(2,3);
+        
+        if((Math.abs(Number(c3) - Number(c1)) == 2) && (Math.abs(Number(c4) - Number(c2)) == 1))
+            return true
+
+        if((Math.abs(Number(c3) - Number(c1)) == 1) && (Math.abs(Number(c4) - Number(c2)) == 2))
+            return true
+    }
 }
 
 class Alfil extends Piezas{
@@ -315,9 +331,12 @@ class Reina extends Piezas{
         let c4 = posicion2.slice(2,3);
         let validar = true;
         
-        return this.movdiag(validar,c1,c2,c3,c4); 
-
         
+        
+        if(this.movlong(c1,c3,c2,c4) || this.movdiag(validar,c1,c2,c3,c4)){
+            return true
+        }
+        return false;
     }
 }
 
@@ -327,6 +346,18 @@ class Rey extends Piezas{
         this.color = color;
         this.piezaB = "reyB.png";
         this.piezaN = "reyN.png";
+    }
+
+    movPos(posicion1,posicion2,color2){
+        let c1 = posicion1.slice(0,1);
+        let c2 = posicion1.slice(2,3);
+
+        let c3 = posicion2.slice(0,1);
+        let c4 = posicion2.slice(2,3);
+        
+        if(((Math.abs(Number(c3) - Number(c1)) == 1) || Number(c3) == Number(c1)) && (Math.abs(Number(c4) - Number(c2)) == 1 || Number(c4) == Number(c2))) 
+            return true;
+
     }
 }
 
