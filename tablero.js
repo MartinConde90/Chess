@@ -115,7 +115,7 @@ class Tablero{
             
 
             if(this.comprobarMov(this.figuraselecc1.color, this.figuraselecc2.color,this.cadena1,this.cadena2)){
-                if(this.casillas[this.caracter1][this.caracter2].movPos(this.cadena1,this.cadena2,this.figuraselecc2.color)){
+                if(this.casillas[this.caracter1][this.caracter2].movPos(this.cadena1,this.cadena2,this.figuraselecc2.color) && this.movimientolibre(this.caracter1,this.caracter2,this.caracter3,this.caracter4)){
                     let figuraMuerte = "pieza" + this.figuraselecc2.color;
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
 
@@ -144,6 +144,100 @@ class Tablero{
         }
         else
             return true;
+    }
+
+    movimientolibre(c1,c2,c3,c4){
+        c1 = Number(c1);
+        c2 = Number(c2);
+        c3 = Number(c3);
+        c4 = Number(c4);
+
+        let movlong1 = c1-c3;
+        let movlong2 = c2-c4;
+
+        let movdiag1 = c1+c2;
+        let movdiag2 = c3+c4;
+        let movdiag3 = c1-c2;
+        let movdiag4 = c3-c4;
+
+        if(this.seleccion.slice(0,-5) == "alfil" || this.seleccion.slice(0,-5) == "reina"){
+            if(movdiag1 == movdiag2){
+                if(c1>c3){
+                    while((c1-1)>c3){
+                        if(this.casillas[c1-1][c2+1] != "")
+                            return false
+                        c1--;
+                        c2++;
+                    }
+                }
+                if(c1<c3){
+                    while((c1+1)<c3){
+                        if(this.casillas[c1+1][c2-1] != "")
+                            return false
+                        c1++;
+                        c2--;
+                    }
+                }
+            }
+
+            if(movdiag3 == movdiag4){
+                if(c1<c3){
+                    while((c1+1)<c3){
+                        if(this.casillas[c1+1][c2+1] != "")
+                            return false
+                        c1++;
+                        c2++;
+                    }
+                }
+                if(c1>c3){
+                    while((c1-1)>c3){
+                        if(this.casillas[c1-1][c2-1] != "")
+                            return false
+                        c1--;
+                        c2--;
+                    }
+                }
+            }
+        }
+
+        if(this.seleccion.slice(0,-5) == "torre" || this.seleccion.slice(0,-5) == "reina"){
+            if(c1==c3){
+                if(movlong2 > 0){
+                    while((c2-1) > c4){
+                        if(this.casillas[c1][c2-1] != "")
+                            return false
+                        c2--;
+                    }
+                }
+                if(movlong2 < 0){
+                    while((c2+1) < c4){
+                        if(this.casillas[c1][c2+1] != "")
+                            return false
+                        c2++;
+                    }
+                }
+            }
+            if(c2==c4){
+                if(movlong1 > 0){
+                    while((c1-1) > c3){
+                        if(this.casillas[c1-1][c2] != "")
+                            return false
+                        c1--;
+                    }
+                }
+                if(movlong1 < 0){
+                    while((c1+1) < c3){
+                        if(this.casillas[c1+1][c2] != "")
+                            return false
+                        c1++;
+                    }
+                }
+            }
+        }
+
+        if(this.seleccion.slice(0,-5) == "caballo")
+        //ya has comprobado que se puede mover ahi, averigua cuales tiene en medio, si la distancia entre ambos es dos, positiva o neg? entonces el 1, si la distancia es 1, pos o neg, entonces el 2
+        return true;
     }
 
     muertes(figura,direct){
