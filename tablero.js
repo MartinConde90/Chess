@@ -27,6 +27,10 @@ class Tablero{
 
         this.direct = ""; //directorio fig1
 
+        this.turno = "B";
+
+        this.guardar = "";
+
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
                         [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
                         ["","","","","","","",""],
@@ -85,9 +89,13 @@ class Tablero{
             this.cadena1 = elemento.id;
             this.caracter1 = this.cadena1.charAt(0);
             this.caracter2 = this.cadena1.charAt(2);
-
-            this.figuraselecc1 = this.casillas[this.caracter1][this.caracter2];
             
+            this.figuraselecc1 = this.casillas[this.caracter1][this.caracter2];
+            console.log(this.turno + "turno actual");
+            
+            if(this.turno != this.figuraselecc1.color)
+                return false;
+
             if(this.figuraselecc1.color == "N"){
                 this.direct = this.figuraselecc1.directorioN;
             }
@@ -123,20 +131,40 @@ class Tablero{
                     console.log(this.casillas);
                     this.casillas[this.caracter3][this.caracter4] = this.figuraselecc1; //mete el objeto
                     
+                    this.archivar();
                     //console.log(this.blancasM);
                     //console.log(this.negrasM);
 
                     this.borrar.innerHTML = '';
                     document.getElementById(this.cadena2).innerHTML='<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct + this.seleccion +'" />';
                     this.cambiofig = true;
+
+                    
+                    if(this.turno == "N")
+                        this.turno = "B";
+                    else
+                        this.turno = "N";
+                        
+                    //console.log(this.turno + "cambio turno");
                 }
             }
         }
     }
 
+    archivar(){
+        this.guardar = JSON.stringify(this.casillas);
+            //console.log(this.guardar);
+
+            //AJAX
+            var peticion = new XMLHttpRequest();
+            peticion.open('POST', 'guardarTablero.php'); /*con open le pedidmos mediante GET, que se conecte a esa pagina*/
+            peticion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            peticion.send("datos=" + this.guardar);
+    }
+
     comprobarMov(color1, color2,posicion1,posicion2){
-        console.log(posicion1);
-        console.log(posicion2);
+        console.log(color1);
+        console.log(color2);
         
         if(color1 == color2 ){
             this.cambiofig = true;
@@ -146,98 +174,175 @@ class Tablero{
             return true;
     }
 
-    movimientolibre(c1,c2,c3,c4){
-        c1 = Number(c1);
-        c2 = Number(c2);
-        c3 = Number(c3);
-        c4 = Number(c4);
+    movimientolibre(y1,x1,y2,x2){
+        y1 = Number(y1);
+        x1 = Number(x1);
+        y2 = Number(y2);
+        x2 = Number(x2);
 
-        let movlong1 = c1-c3;
-        let movlong2 = c2-c4;
+        let movlong1 = y1-y2;
+        let movlong2 = x1-x2;
 
-        let movdiag1 = c1+c2;
-        let movdiag2 = c3+c4;
-        let movdiag3 = c1-c2;
-        let movdiag4 = c3-c4;
+        let movdiag1 = y1+x1;
+        let movdiag2 = y2+x2;
+        let movdiag3 = y1-x1;
+        let movdiag4 = y2-x2;
+
+        let contadorCaballo = 0;
 
         if(this.seleccion.slice(0,-5) == "alfil" || this.seleccion.slice(0,-5) == "reina"){
             if(movdiag1 == movdiag2){
-                if(c1>c3){
-                    while((c1-1)>c3){
-                        if(this.casillas[c1-1][c2+1] != "")
+                if(y1>y2){
+                    while((y1-1)>y2){
+                        if(this.casillas[y1-1][x1+1] != "")
                             return false
-                        c1--;
-                        c2++;
+                        y1--;
+                        x1++;
                     }
                 }
-                if(c1<c3){
-                    while((c1+1)<c3){
-                        if(this.casillas[c1+1][c2-1] != "")
+                if(y1<y2){
+                    while((y1+1)<y2){
+                        if(this.casillas[y1+1][x1-1] != "")
                             return false
-                        c1++;
-                        c2--;
+                        y1++;
+                        x1--;
                     }
                 }
             }
 
             if(movdiag3 == movdiag4){
-                if(c1<c3){
-                    while((c1+1)<c3){
-                        if(this.casillas[c1+1][c2+1] != "")
+                if(y1<y2){
+                    while((y1+1)<y2){
+                        if(this.casillas[y1+1][x1+1] != "")
                             return false
-                        c1++;
-                        c2++;
+                        y1++;
+                        x1++;
                     }
                 }
-                if(c1>c3){
-                    while((c1-1)>c3){
-                        if(this.casillas[c1-1][c2-1] != "")
+                if(y1>y2){
+                    while((y1-1)>y2){
+                        if(this.casillas[y1-1][x1-1] != "")
                             return false
-                        c1--;
-                        c2--;
+                        y1--;
+                        x1--;
                     }
                 }
             }
         }
 
         if(this.seleccion.slice(0,-5) == "torre" || this.seleccion.slice(0,-5) == "reina"){
-            if(c1==c3){
+            if(y1==y2){
                 if(movlong2 > 0){
-                    while((c2-1) > c4){
-                        if(this.casillas[c1][c2-1] != "")
+                    while((x1-1) > x2){
+                        if(this.casillas[y1][x1-1] != "")
                             return false
-                        c2--;
+                        x1--;
                     }
                 }
                 if(movlong2 < 0){
-                    while((c2+1) < c4){
-                        if(this.casillas[c1][c2+1] != "")
+                    while((x1+1) < x2){
+                        if(this.casillas[y1][x1+1] != "")
                             return false
-                        c2++;
+                        x1++;
                     }
                 }
             }
-            if(c2==c4){
+            if(x1==x2){
                 if(movlong1 > 0){
-                    while((c1-1) > c3){
-                        if(this.casillas[c1-1][c2] != "")
+                    while((y1-1) > y2){
+                        if(this.casillas[y1-1][x1] != "")
                             return false
-                        c1--;
+                        y1--;
                     }
                 }
                 if(movlong1 < 0){
-                    while((c1+1) < c3){
-                        if(this.casillas[c1+1][c2] != "")
+                    while((y1+1) < y2){
+                        if(this.casillas[y1+1][x1] != "")
                             return false
-                        c1++;
+                        y1++;
                     }
                 }
             }
         }
 
-        if(this.seleccion.slice(0,-5) == "caballo")
-        //ya has comprobado que se puede mover ahi, averigua cuales tiene en medio, si la distancia entre ambos es dos, positiva o neg? entonces el 1, si la distancia es 1, pos o neg, entonces el 2
-        return true;
+        if(this.seleccion.slice(0,-5) == "caballo"){
+
+            let verif1 = 0;
+            let verif2 = 0;
+            
+
+
+            if((Math.abs(Number(y2) - Number(y1)) == 2) && (Math.abs(Number(x2) - Number(x1)) == 1)){
+                let yuno = y1;
+                let ydos = y2;
+                let xuno = x1;
+                
+                while(yuno != ydos){
+                    if(this.casillas[yuno+(movlong1/2*-1)][xuno] != "" && contadorCaballo == 1)
+                            verif1++;
+                    if(this.casillas[yuno+(movlong1/2*-1)][xuno] != "" && contadorCaballo < 1)
+                        contadorCaballo++;
+
+                yuno += (movlong1/2)*-1;
+                }
+            }
+
+            if((Math.abs(Number(x2) - Number(x1)) == 2) && (Math.abs(Number(y2) - Number(y1)) == 1)){
+                let yuno = y1;
+                
+                let xuno = x1;
+                let xdos = x2;
+                while(xuno != xdos){
+                    if(this.casillas[yuno][xuno+(movlong2/2*-1)] != "" && contadorCaballo == 1)
+                            verif1++;
+                    if(this.casillas[yuno][xuno+(movlong2/2*-1)] != "" && contadorCaballo < 1)
+                        contadorCaballo++;
+
+                xuno += (movlong2/2)*-1;
+                }
+            }
+
+            if((Math.abs(Number(x2) - Number(x1)) == 1) && (Math.abs(Number(y2) - Number(y1)) == 2)){
+                contadorCaballo = 0;
+                while(x1 != x2){
+                    
+                    if(this.casillas[y1][x1+(movlong2*-1)] != "")
+                        contadorCaballo++;
+
+                x1 += movlong2*-1;
+                }
+
+                while(y1 != y2+(movlong1/2)){
+                    if(this.casillas[y1+(movlong1/2*-1)][x1] != "" && contadorCaballo == 1)
+                            verif2++;
+                y1+= (movlong1/2*-1);
+                }
+
+            }
+            
+            if((Math.abs(Number(y2) - Number(y1)) == 1) && (Math.abs(Number(x2) - Number(x1)) == 2)){
+                contadorCaballo = 0;
+                while(y1 != y2){
+                    console.log(y1+(movlong1*-1));
+                    if(this.casillas[y1+(movlong1*-1)][x1] != "")
+                        contadorCaballo++;
+
+                y1 += (movlong1*-1);
+                }
+
+                while(x1 != x2+(movlong2/2)){
+                    if(this.casillas[y1][x1+(movlong2/2*-1)] != "" && contadorCaballo == 1)
+                            verif2++;
+                x1+= (movlong2/2*-1);
+                }
+
+            }
+
+            if(verif1 == 1 && verif2 == 1)
+                return false
+        }
+
+    return true;
     }
 
     muertes(figura,direct){
@@ -251,7 +356,6 @@ class Tablero{
         }
     }
 }
-
 
 class Piezas{
     constructor(){
@@ -267,33 +371,33 @@ class Piezas{
             return this.directorioN + this.piezaN;  
     }
 
-    movdiag(validar,c1,c2,c3,c4){
-        if(c1<c3){
-            if(c2>c4)
-                return this.comprobdiag(validar,c1,c2,c3,c4);
-            if(c2<c4){
+    movdiag(validar,y1,x1,y2,x2){
+        if(y1<y2){
+            if(x1>x2)
+                return this.comprobdiag(validar,y1,x1,y2,x2);
+            if(x1<x2){
                 validar = false;
-                return this.comprobdiag(validar,c1,c2,c3,c4);  
+                return this.comprobdiag(validar,y1,x1,y2,x2);  
             }
         }
-        if(c1>c3){
-            if(c2>c4){
+        if(y1>y2){
+            if(x1>x2){
                 validar = false;
-                return this.comprobdiag(validar,c1,c2,c3,c4);
+                return this.comprobdiag(validar,y1,x1,y2,x2);
             }
-            if(c2<c4)
-                return this.comprobdiag(validar,c1,c2,c3,c4);
+            if(x1<x2)
+                return this.comprobdiag(validar,y1,x1,y2,x2);
         }  
     }
 
-    comprobdiag(validar,c1,c2,c3,c4){
+    comprobdiag(validar,y1,x1,y2,x2){
         
             if(validar){
-                if((Number(c1)+Number(c2)) == (Number(c3)+Number(c4)))
+                if((Number(y1)+Number(x1)) == (Number(y2)+Number(x2)))
                     return true;
             }
             else{
-                if((Number(c1)-Number(c2)) == (Number(c3)-Number(c4)))
+                if((Number(y1)-Number(x1)) == (Number(y2)-Number(x2)))
                     return true;
             }
             return false;   
@@ -373,16 +477,16 @@ class Caballo extends Piezas{
     }
 
     movPos(posicion1,posicion2,color2){
-        let c1 = posicion1.slice(0,1);
-        let c2 = posicion1.slice(2,3);
+        let y1 = posicion1.slice(0,1);
+        let x1 = posicion1.slice(2,3);
 
-        let c3 = posicion2.slice(0,1);
-        let c4 = posicion2.slice(2,3);
+        let y2 = posicion2.slice(0,1);
+        let x2 = posicion2.slice(2,3);
         
-        if((Math.abs(Number(c3) - Number(c1)) == 2) && (Math.abs(Number(c4) - Number(c2)) == 1))
+        if((Math.abs(Number(y2) - Number(y1)) == 2) && (Math.abs(Number(x2) - Number(x1)) == 1))
             return true
 
-        if((Math.abs(Number(c3) - Number(c1)) == 1) && (Math.abs(Number(c4) - Number(c2)) == 2))
+        if((Math.abs(Number(y2) - Number(y1)) == 1) && (Math.abs(Number(x2) - Number(x1)) == 2))
             return true
     }
 }
@@ -454,8 +558,6 @@ class Rey extends Piezas{
 
     }
 }
-
-
 
 let Inicializar = new Tablero();
 Inicializar.dibujarT();
