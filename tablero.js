@@ -5,7 +5,6 @@ class Tablero{
         //this.piezas = new Piezas();
 
         this.seleccion = ""; //nombre pieza
-        
         this.cambiofig = true;
 
         this.cadena1 = ""; //id1
@@ -30,6 +29,7 @@ class Tablero{
         this.turno = "B";
 
         this.guardar = "";
+        this.guardarturno = "";
 
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
                         [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
@@ -67,9 +67,22 @@ class Tablero{
         }
     }
 
+    IntroducirNombre(){
+        let borrar1 = document.getElementById('start');
+        borrar1.parentNode.removeChild(borrar1);
+
+        let borrar2 = document.getElementById('continue');
+        borrar2.parentNode.removeChild(borrar2);
+
+        document.getElementById('padrebotones').innerHTML='<input type="text" id="name" required placeholder="Insert Match Name" value=""></input>';
+        document.getElementById('padrebotones').innerHTML+='<button type="submit" id="start"  onclick="Inicializar.Iniciar()">Start!</button>';
+
+    }
     Iniciar(){
-        let borrar = document.getElementById('start');
+        let borrar = document.getElementById('padrebotones');
+        //borrar.innerHTML = '';
         borrar.parentNode.removeChild(borrar);
+        
         let n = 0;
         while(n <= 7 ){
             let m = 0;
@@ -82,6 +95,63 @@ class Tablero{
         }
     }
 
+    Continuar(){
+        
+        let datos = "";
+        let parametros = '?buscado=' + 1;
+        var peticion = new XMLHttpRequest();
+        //establecer parámetros peticion
+        peticion.open('GET', 'continuarpartida.php' + parametros) //carga esta pagina al clicar en CargarDatos
+        //enviar peticion
+        peticion.send();
+        let objectoPrincipal = this;
+        //gestionar respuesta
+        peticion.onreadystatechange = function(){
+            if(this.readyState == 4){
+            datos = JSON.parse(this.responseText);
+            
+            //console.log(this.responseText);    
+
+            objectoPrincipal.turno = datos.turno;
+            //datos.partida
+            objectoPrincipal.casillas = [["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""],
+                                        ["","","","","","","",""]];
+        for(let ficha of datos.partida){
+            
+            
+            objectoPrincipal.casillas[ficha.posY][ficha.posX] = objectoPrincipal.factoriaDePiezas(ficha);
+            //console.log(ficha);
+        }
+        
+        objectoPrincipal.Iniciar();
+        
+            }   
+        };
+        
+
+
+    }
+    factoriaDePiezas(ficha){
+        let nuevaPieza;
+        switch(ficha.pieza) {
+            
+            case "Torre": nuevaPieza = new Torre(ficha.color); break;
+            case "Alfil": nuevaPieza = new Alfil(ficha.color); break;
+            case "Caballo": nuevaPieza = new Caballo(ficha.color); break;
+            case "Reina": nuevaPieza = new Reina(ficha.color); break;
+            case "Rey": nuevaPieza = new Rey(ficha.color); break;
+            case "Peon": nuevaPieza = new Peon(ficha.color); break;
+        }
+
+        return nuevaPieza;
+
+    }
     mover(elemento){
         
         if(this.cambiofig == true){
@@ -91,7 +161,7 @@ class Tablero{
             this.caracter2 = this.cadena1.charAt(2);
             
             this.figuraselecc1 = this.casillas[this.caracter1][this.caracter2];
-            console.log(this.turno + "turno actual");
+            //console.log(this.turno + "turno actual");
             
             if(this.turno != this.figuraselecc1.color)
                 return false;
@@ -103,9 +173,9 @@ class Tablero{
                 this.direct = this.figuraselecc1.directorioB;
 
             if(this.figuraselecc1 != ""){
-                let imagen = "pieza" + this.figuraselecc1.color;
-                this.seleccion = this.figuraselecc1[imagen];
-                
+                //let imagen = "pieza" + this.figuraselecc1.color;
+                this.seleccion = this.figuraselecc1.recuperarImagen();
+                //console.log(this.seleccion);
                 this.borrar = elemento;
                 this.cambiofig = false;
             }
@@ -128,10 +198,10 @@ class Tablero{
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
 
                     this.casillas[this.caracter1][this.caracter2] = "";
-                    console.log(this.casillas);
+                    //console.log(this.casillas);
                     this.casillas[this.caracter3][this.caracter4] = this.figuraselecc1; //mete el objeto
                     
-                    this.archivar();
+                    
                     //console.log(this.blancasM);
                     //console.log(this.negrasM);
 
@@ -146,25 +216,44 @@ class Tablero{
                         this.turno = "N";
                         
                     //console.log(this.turno + "cambio turno");
+                    this.archivar();
+                    //this.Continuar();
                 }
             }
         }
     }
 
     archivar(){
-        this.guardar = JSON.stringify(this.casillas);
-            //console.log(this.guardar);
+        //console.log(this.casillas);
+        let almacenamiento = [];
+        
+        for(let posY in this.casillas){
+            let array1 = this.casillas[posY];
+            for(let posX in array1){
+                let pieza = array1[posX];
+                if(pieza != "") {
+                    //console.log(pieza.color);
+                    almacenamiento.push({posY:posY, posX: posX, pieza: pieza.nombre, color: pieza.color});
+                    //console.log(almacenamiento);
+                }
+            }
+        }
+        
+        this.guardar = JSON.stringify({turno:this.turno, partida:almacenamiento}); //codificamos
+        //this.guardarturno = JSON.stringify(this.turno);
+       // console.log(this.guardarturno);
 
-            //AJAX
-            var peticion = new XMLHttpRequest();
-            peticion.open('POST', 'guardarTablero.php'); /*con open le pedidmos mediante GET, que se conecte a esa pagina*/
-            peticion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            peticion.send("datos=" + this.guardar);
+        //AJAX
+        var peticion = new XMLHttpRequest();
+        peticion.open('POST', 'guardarTablero.php'); /*con open le pedidmos mediante GET, que se conecte a esa pagina*/
+        peticion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      //  peticion.send("datos=" + this.guardar  + "&turno=" + this.guardarturno);
+        peticion.send("datos=" + this.guardar);
     }
 
     comprobarMov(color1, color2,posicion1,posicion2){
-        console.log(color1);
-        console.log(color2);
+        //console.log(color1);
+        //console.log(color2);
         
         if(color1 == color2 ){
             this.cambiofig = true;
@@ -323,7 +412,7 @@ class Tablero{
             if((Math.abs(Number(y2) - Number(y1)) == 1) && (Math.abs(Number(x2) - Number(x1)) == 2)){
                 contadorCaballo = 0;
                 while(y1 != y2){
-                    console.log(y1+(movlong1*-1));
+                    //console.log(y1+(movlong1*-1));
                     if(this.casillas[y1+(movlong1*-1)][x1] != "")
                         contadorCaballo++;
 
@@ -362,7 +451,13 @@ class Piezas{
         this.directorioB = "piezas/blancas/";
         this.directorioN = "piezas/negras/";
     }
-    
+    recuperarImagen() {
+        if(this.color == 'B') {
+            return this.piezaB;
+        }
+        return this.piezaN;
+    }
+
     figura(){
 
         if(this.color == "B")
@@ -420,6 +515,7 @@ class Peon extends Piezas{
         this.desplazamiento = 1;
         this.posIni = "1";
         this.color2 = "N";
+        this.nombre = "Peon";
         
         if(color == 'N') {
             this.desplazamiento = -1;
@@ -453,6 +549,7 @@ class Torre extends Piezas{
         this.color = color;
         this.piezaB = "torreB.png";
         this.piezaN = "torreN.png";
+        this.nombre = "Torre";
     } 
 
     movPos(posicion1,posicion2,color2){
@@ -474,6 +571,7 @@ class Caballo extends Piezas{
         this.color = color;
         this.piezaB = "caballoB.png";
         this.piezaN = "caballoN.png";
+        this.nombre = "Caballo";
     }
 
     movPos(posicion1,posicion2,color2){
@@ -497,7 +595,7 @@ class Alfil extends Piezas{
         this.color = color;
         this.piezaB = "alfilB.png";
         this.piezaN = "alfilN.png";
-        
+        this.nombre = "Alfil";
     }
 
     movPos(posicion1,posicion2,color2){
@@ -519,6 +617,7 @@ class Reina extends Piezas{
         this.color = color;
         this.piezaB = "reinaB.png";
         this.piezaN = "reinaN.png";
+        this.nombre = "Reina";
     }
 
     movPos(posicion1,posicion2,color2){
@@ -544,6 +643,7 @@ class Rey extends Piezas{
         this.color = color;
         this.piezaB = "reyB.png";
         this.piezaN = "reyN.png";
+        this.nombre = "Rey";
     }
 
     movPos(posicion1,posicion2,color2){
@@ -561,4 +661,4 @@ class Rey extends Piezas{
 
 let Inicializar = new Tablero();
 Inicializar.dibujarT();
-//Inicializar.Iniciar();
+

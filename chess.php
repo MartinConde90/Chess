@@ -11,9 +11,10 @@
 <body>
 
 
-<div class="padre" >
-    <div class="boton" >
-        <button type="button" id="start"  onclick="Inicializar.Iniciar()">START!</button>
+<div class="padre"  >
+    <div class="boton" id="padrebotones" >
+        <button type="button" id="start"  onclick="Inicializar.IntroducirNombre()">NEW GAME!</button>
+        <button type="button" id="continue"  onclick="Inicializar.Continuar()">CONTINUE</button>
     </div>
 
     <div id="muertasB" >
