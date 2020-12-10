@@ -4,6 +4,9 @@ html{
 body{
     height: 100%;
     margin: 0;
+    /*background-image: url("piezas/fondo.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;*/
 }
 
 .padre{
@@ -13,20 +16,20 @@ body{
     grid-template-rows: auto 730px auto;
     grid-template-columns: auto 190px 720px 190px auto;
     grid-template-areas:
-                        '. header header header .'
+                        '. header1 header2 header3 .'
                         '. col1 col2 col3 .'
                         '. footer footer footer .';
     height: 100%;
 }
 
 .boton{
-    grid-area: header;
+    grid-area: header2;
     text-align: center;
 }
 
 #muertasB{
     display: grid;
-    grid-auto-flow: column;
+    grid-auto-flow: dense;
     grid-template-columns: 90px 90px;
     grid-template-rows: 90px 90px 90px 90px 90px 90px 90px 90px;
     box-sizing: border-box;
@@ -47,10 +50,63 @@ body{
 
 #muertasN{
     display: grid;
-    grid-auto-flow: column;
+    grid-auto-flow: dense;
     grid-template-columns: 90px 90px;
     grid-template-rows: 90px 90px 90px 90px 90px 90px 90px 90px;
     box-sizing: border-box;
     border: 5px solid red;
     grid-area: col3;
+    
 }
+
+#turnoB{
+    display: block;
+     /*margin: auto; 
+     padding: 13px;*/
+     grid-area: header3;
+     min-height: 64px;
+}
+#turnoN{
+    display: block;
+     /*margin: auto; 
+     padding: 13px;*/
+     grid-area: header1;
+     min-height: 64px;
+}
+
+.emergente{
+    width:400px;
+    height:200px;
+    position:fixed;
+    background-color:#FFFAFA;
+    top:50%;
+    left:50%;
+    margin-left:-200px;
+    margin-top:-100px;
+    border:1px solid #000;
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+    box-shadow: 10px 10px 10px #ccc;
+}
+
+.emergente p{
+    font-size:24px;
+}
+
+.emergente .boton{
+        font-size: 18px;
+        border: 1px solid #000;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 32px;
+        box-shadow: 5px 5px 5px #ccc;
+}
+.torre{background-color:#FAF0E6;}
+.caballo{background-color:#F5F5DC;}
+.torre:hover{background-color:#ff0000;}
+.caballo:hover{background-color:#00ff00;}
+.alfil{background-color:#FAF0E6;}
+.reina{background-color:#F5F5DC;}
+.alfil:hover{background-color:#ff0000;}
+.reina:hover{background-color:#00ff00;}

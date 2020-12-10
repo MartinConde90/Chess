@@ -14,8 +14,9 @@
 <div class="padre"  >
     <div class="boton" id="padrebotones" >
         <button type="button" id="start"  onclick="Inicializar.IntroducirNombre()">NEW GAME!</button>
-        <button type="button" id="continue"  onclick="Inicializar.Continuar()">CONTINUE</button>
+        <button type="button" id="continue"  onclick="Inicializar.BuscarPartida()">CONTINUE</button>
     </div>
+    
 
     <div id="muertasB" >
         </div>
@@ -25,6 +26,16 @@
 
     <div id="muertasN">
     </div>
+
+    <div id="turnoB">
+    </div>
+
+    <div id="turnoN">
+    </div>
+
+    <div id="promocion">
+    </div>
+
 </div>
 <script src="tablero.js"></script>
 

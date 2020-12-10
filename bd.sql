@@ -8,7 +8,7 @@ USE ajedrez;
 
 CREATE TABLE tablero (
   codigo INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  /*turno varchar (10) NOT NULL,*/
+  nombre varchar (100) NOT NULL,
   partida varchar (2000) NOT NULL
   
 );

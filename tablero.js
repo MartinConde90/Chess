@@ -31,8 +31,10 @@ class Tablero{
         this.guardar = "";
         this.guardarturno = "";
 
+        this.nombrePartida = "";
+
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
-                        [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
+                        [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("N"),new Peon("B"),new Peon("B"),new Peon("B")],
                         ["","","","","","","",""],
                         ["","","","","","","",""],
                         ["","","","","","","",""],
@@ -74,12 +76,35 @@ class Tablero{
         let borrar2 = document.getElementById('continue');
         borrar2.parentNode.removeChild(borrar2);
 
-        document.getElementById('padrebotones').innerHTML='<input type="text" id="name" required placeholder="Insert Match Name" value=""></input>';
-        document.getElementById('padrebotones').innerHTML+='<button type="submit" id="start"  onclick="Inicializar.Iniciar()">Start!</button>';
+        document.getElementById('padrebotones').innerHTML='<form id="buscarbd" name="formulario" method="post"><input type="text" name="fname" placeholder="Insert match name" required ><input type="button" value="Submit" onclick="Inicializar.Iniciar()" ></form>';
+        
 
     }
+
+    BuscarPartida(){
+        let borrar1 = document.getElementById('start');
+        borrar1.parentNode.removeChild(borrar1);
+
+        let borrar2 = document.getElementById('continue');
+        borrar2.parentNode.removeChild(borrar2);
+
+        document.getElementById('padrebotones').innerHTML='<form name="formulario" id="buscarbd" method="post"><input type="text" name="fname" placeholder="Search match name" required ><input type="button" value="Submit"  onclick="Inicializar.Continuar()" ></form>';
+    }
+
+    
     Iniciar(){
-        let borrar = document.getElementById('padrebotones');
+
+        this.nombrePartida = document.forms["formulario"]["fname"].value;
+        if (this.nombrePartida == "")    
+            return false;
+
+        this.ColocarPiezas();
+    }
+
+    
+    ColocarPiezas(){
+
+        let borrar = document.getElementById("buscarbd");
         //borrar.innerHTML = '';
         borrar.parentNode.removeChild(borrar);
         
@@ -95,48 +120,6 @@ class Tablero{
         }
     }
 
-    Continuar(){
-        
-        let datos = "";
-        let parametros = '?buscado=' + 1;
-        var peticion = new XMLHttpRequest();
-        //establecer parámetros peticion
-        peticion.open('GET', 'continuarpartida.php' + parametros) //carga esta pagina al clicar en CargarDatos
-        //enviar peticion
-        peticion.send();
-        let objectoPrincipal = this;
-        //gestionar respuesta
-        peticion.onreadystatechange = function(){
-            if(this.readyState == 4){
-            datos = JSON.parse(this.responseText);
-            
-            //console.log(this.responseText);    
-
-            objectoPrincipal.turno = datos.turno;
-            //datos.partida
-            objectoPrincipal.casillas = [["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""],
-                                        ["","","","","","","",""]];
-        for(let ficha of datos.partida){
-            
-            
-            objectoPrincipal.casillas[ficha.posY][ficha.posX] = objectoPrincipal.factoriaDePiezas(ficha);
-            //console.log(ficha);
-        }
-        
-        objectoPrincipal.Iniciar();
-        
-            }   
-        };
-        
-
-
-    }
     factoriaDePiezas(ficha){
         let nuevaPieza;
         switch(ficha.pieza) {
@@ -179,6 +162,21 @@ class Tablero{
                 this.borrar = elemento;
                 this.cambiofig = false;
             }
+
+            if(this.turno == "B"){
+                let borrar1 = document.getElementById('turnoNegra');
+                if(borrar1 !== null)
+                    borrar1.parentNode.removeChild(borrar1);
+                turnoB.innerHTML='<img id="turnoBlanca" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />';
+                
+            }
+
+            if(this.turno == "N"){
+                let borrar1 = document.getElementById('turnoBlanca');
+                if(borrar1 !== null)
+                    borrar1.parentNode.removeChild(borrar1);
+                turnoN.innerHTML='<img id="turnoNegra" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />';
+            }
         }
         //console.log(figura);  
         else{
@@ -198,29 +196,98 @@ class Tablero{
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
 
                     this.casillas[this.caracter1][this.caracter2] = "";
-                    //console.log(this.casillas);
+                    //console.log(this.seleccion);
+                    if(this.figuraselecc1 instanceof Peon && (this.caracter3 == 7 || this.caracter3 == 0)){ //promocionar peon
+                        console.log("peon llega al final");
+                        
+                            
+                        let texto = document.createElement('div');
+                        texto.className = "emergente";
+                        texto.id = "emergente";
+                        texto.innerHTML = `<p>Promociona a tu peón</p>`;
+                        document.getElementById("promocion").appendChild(texto);
+
+                        let torreSeleccionable = document.createElement('div');
+                        torreSeleccionable.className= "boton torre";
+                        torreSeleccionable.innerHTML = `<img style="display: block; margin: auto; margin-top: 13px;" src="${this.direct}torre${this.figuraselecc1.color}.png" />`;
+                        torreSeleccionable.onclick = function(){Inicializar.promocionarPieza('Torre')};
+                        document.getElementById("emergente").appendChild(torreSeleccionable);
+
+                        let caballoSeleccionable = document.createElement('div');
+                        caballoSeleccionable.className= "boton caballo";
+                        caballoSeleccionable.innerHTML = `<img style="display: block; margin: auto; margin-top: 13px;" src="${this.direct}caballo${this.figuraselecc1.color}.png" />`;
+                        caballoSeleccionable.onclick = function(){Inicializar.promocionarPieza('Caballo')};
+                        document.getElementById("emergente").appendChild(caballoSeleccionable);
+
+                        let alfilSeleccionable = document.createElement('div');
+                        alfilSeleccionable.className= "boton alfil";
+                        alfilSeleccionable.innerHTML = `<img style="display: block; margin: auto; margin-top: 13px;" src="${this.direct}alfil${this.figuraselecc1.color}.png" />`;
+                        alfilSeleccionable.onclick = function(){Inicializar.promocionarPieza('Alfil')};
+                        document.getElementById("emergente").appendChild(alfilSeleccionable);
+
+                        let reinaSeleccionable = document.createElement('div');
+                        reinaSeleccionable.className= "boton reina";
+                        reinaSeleccionable.innerHTML = `<img style="display: block; margin: auto; margin-top: 13px;" src="${this.direct}reina${this.figuraselecc1.color}.png" />`;
+                        reinaSeleccionable.onclick = function(){Inicializar.promocionarPieza('Reina')};
+                        document.getElementById("emergente").appendChild(reinaSeleccionable);
+                        
+                        
+                    }
+
+                    else{    
                     this.casillas[this.caracter3][this.caracter4] = this.figuraselecc1; //mete el objeto
                     
+                    console.log(this.figuraselecc1);
                     
-                    //console.log(this.blancasM);
-                    //console.log(this.negrasM);
-
                     this.borrar.innerHTML = '';
                     document.getElementById(this.cadena2).innerHTML='<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct + this.seleccion +'" />';
+                    }
+
                     this.cambiofig = true;
 
-                    
-                    if(this.turno == "N")
-                        this.turno = "B";
-                    else
-                        this.turno = "N";
+                    if(this.blancasM.includes("reyB.png") || this.negrasM.includes("reyN.png")){
                         
-                    //console.log(this.turno + "cambio turno");
+                        
+                        let texto = document.createElement('div');
+                        texto.className = "emergente";
+                        texto.id = "emergente";
+                        texto.innerHTML = `<p>Victoria!!!</p>`;
+                        texto.innerHTML += '<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct +`reina`+this.turno+`.png`+'" />';
+                        document.getElementById("promocion").appendChild(texto);
+
+                        document.getElementById('padrebotones').innerHTML='<button type="button"   onclick="location.reload();">Volver al menú</button> ';
+                        
+                         
+                    }
+
+                    if(this.turno == "N"){
+                        this.turno = "B";
+                    }
+                    else{           
+                        this.turno = "N";
+                    }
+                        
+                    //console.log(this.blancasM);
                     this.archivar();
+                    
                     //this.Continuar();
                 }
             }
         }
+    }
+
+    promocionarPieza(objeto){
+        
+        let array = {pieza: objeto, color: this.figuraselecc1.color};
+        this.figuraselecc1 = this.factoriaDePiezas(array);
+        this.casillas[this.caracter3][this.caracter4] = this.figuraselecc1;
+
+        this.borrar.innerHTML = '';
+
+        document.getElementById(this.cadena2).innerHTML='<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct + this.figuraselecc1.recuperarImagen() +'" />';
+        let borrar1 = document.getElementById('emergente');
+            borrar1.remove();
+
     }
 
     archivar(){
@@ -239,16 +306,75 @@ class Tablero{
             }
         }
         
-        this.guardar = JSON.stringify({turno:this.turno, partida:almacenamiento}); //codificamos
-        //this.guardarturno = JSON.stringify(this.turno);
+        this.guardar = JSON.stringify({turno:this.turno, partida:almacenamiento, muertasB:this.blancasM, muertasN:this.negrasM}); //codificamos
+        //this.guardarnombre = JSON.stringify(this.nombrePartida);
        // console.log(this.guardarturno);
 
         //AJAX
         var peticion = new XMLHttpRequest();
         peticion.open('POST', 'guardarTablero.php'); /*con open le pedidmos mediante GET, que se conecte a esa pagina*/
         peticion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      //  peticion.send("datos=" + this.guardar  + "&turno=" + this.guardarturno);
-        peticion.send("datos=" + this.guardar);
+        peticion.send("datos=" + this.guardar  + "&nombre=" + this.nombrePartida);
+        
+        //peticion.send("datos=" + this.guardar);
+    }
+
+    Continuar(){
+        this.nombrePartida = document.forms["formulario"]["fname"].value;
+        if (this.nombrePartida == "")    
+            return false;
+
+        let datos = "";
+        let parametros = '?buscado=' + this.nombrePartida;
+        var peticion = new XMLHttpRequest();
+        //establecer parámetros peticion
+        peticion.open('GET', 'continuarpartida.php' + parametros) //carga esta pagina al clicar en CargarDatos
+        //enviar peticion
+        peticion.send();
+        let objectoPrincipal = this;
+        //gestionar respuesta
+        peticion.onreadystatechange = function(){
+            if(this.readyState == 4){
+                if(this.responseText == ""){
+                    let borrar1 = document.getElementById('buscarbd');
+                    borrar1.parentNode.removeChild(borrar1);
+                    document.getElementById('padrebotones').innerHTML='<button type="button" id="start"  onclick="Inicializar.IntroducirNombre()">NEW GAME!</button> ';
+                    document.getElementById('padrebotones').innerHTML+=' <button type="button" id="continue"  onclick="Inicializar.BuscarPartida()">CONTINUE</button>';
+                    alert("Partida no encontrada");
+                    return false
+                }
+            datos = JSON.parse(this.responseText);
+            
+
+            //console.log(this.responseText);    
+            objectoPrincipal.blancasM = datos.muertasB;
+            objectoPrincipal.negrasM = datos.muertasN;
+
+            objectoPrincipal.turno = datos.turno;
+            //datos.partida
+            objectoPrincipal.casillas = [["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""],
+                                         ["","","","","","","",""]];
+        for(let ficha of datos.partida){
+            objectoPrincipal.casillas[ficha.posY][ficha.posX] = objectoPrincipal.factoriaDePiezas(ficha);
+            //console.log(ficha);
+        }
+        for(let muerta of datos.muertasN){
+            muertasN.innerHTML+='<img style="display: block; margin: auto; margin-top: 13px;" src="piezas/negras/'+ muerta +'" />';
+        }
+        for(let muerta of datos.muertasB){
+            muertasB.innerHTML+='<img style="display: block; margin: auto; margin-top: 13px;" src="piezas/blancas/'+ muerta +'" />';
+        }
+        console.log(datos.partida);
+        objectoPrincipal.ColocarPiezas();
+        
+            }   
+        };
     }
 
     comprobarMov(color1, color2,posicion1,posicion2){
