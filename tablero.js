@@ -27,6 +27,9 @@ class Tablero{
         this.direct = ""; //directorio fig1
 
         this.turno = "B";
+        this.jugadasB = 0;
+        this.jugadasN = 0;
+        this.jugadasVictoria = 0;
 
         this.guardar = "";
         this.guardarturno = "";
@@ -34,7 +37,7 @@ class Tablero{
         this.nombrePartida = "";
 
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
-                        [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("N"),new Peon("B"),new Peon("B"),new Peon("B")],
+                        [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
                         ["","","","","","","",""],
                         ["","","","","","","",""],
                         ["","","","","","","",""],
@@ -52,16 +55,16 @@ class Tablero{
             if(filas.includes(i)){
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="B" style="background-color: white" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" >'+(x*2+1) + '-' + (i-1)+'</div>';
-                    tablero.innerHTML +='<div class="N" style="background-color: grey" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="B" style="background-color: #bc7918" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" ></div>';
+                    tablero.innerHTML +='<div class="N" style="background-color: #551917" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
                     x--;
                 }
             }
             else{
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="N" style="background-color: grey" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+(x*2+1) + '-' + (i-1)+'</div>';
-                    tablero.innerHTML +='<div class="B" style="background-color: white" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">'+x*2 + '-' + (i-1)+'</div>';
+                    tablero.innerHTML +='<div class="N" style="background-color: #551917" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="B" style="background-color: #bc7918" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
                     x--;
                 }
             }
@@ -76,8 +79,11 @@ class Tablero{
         let borrar2 = document.getElementById('continue');
         borrar2.parentNode.removeChild(borrar2);
 
-        document.getElementById('padrebotones').innerHTML='<form id="buscarbd" name="formulario" method="post"><input type="text" name="fname" placeholder="Insert match name" required ><input type="button" value="Submit" onclick="Inicializar.Iniciar()" ></form>';
-        
+        document.getElementById('padrebotones').innerHTML=`<form id="buscarbd" name="formulario" method="post">
+                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Insert match name" required autofocus >
+                                                            <input class="estilo botonOtro" id="bloquea" type="button" value="START!" onclick="Inicializar.Iniciar()" >
+                                                           </form>`;
+        this.comprobarNombre();
 
     }
 
@@ -88,9 +94,50 @@ class Tablero{
         let borrar2 = document.getElementById('continue');
         borrar2.parentNode.removeChild(borrar2);
 
-        document.getElementById('padrebotones').innerHTML='<form name="formulario" id="buscarbd" method="post"><input type="text" name="fname" placeholder="Search match name" required ><input type="button" value="Submit"  onclick="Inicializar.Continuar()" ></form>';
+        document.getElementById('padrebotones').innerHTML=`<form  name="formulario" id="buscarbd" method="post">
+                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Search match" required autofocus >
+                                                            <input class="estilo botonOtro" id="bloquea" type="button" value="START!"  onclick="Inicializar.Continuar()" >
+                                                           </form>`;
+        //this.comprobarNombre();
     }
 
+    comprobarNombre(){
+        let inputUsuario = document.getElementById('nombre');
+            inputUsuario.onkeyup = function(){
+                        
+                            let peticion = new XMLHttpRequest();
+                            peticion.open('GET', 'comprobarNombre.php?usuario=' + inputUsuario.value); /*con open le pedidmos mediante GET, que se conecte a esa pagina*/
+                            peticion.send();
+                        
+                            peticion.onreadystatechange = function(){
+                                if(this.readyState == 4){
+                                    if(this.status == 200){
+                                        let datos = JSON.parse(this.responseText); //decodificamos
+                                        
+                                        let alerta = document.getElementById('buscarbd');
+                                        if(document.getElementById('parrafo_alerta')) //si existe, lo borro
+                                            document.getElementById('parrafo_alerta').remove();
+                                        let crea = document.createElement('p'); 
+                                        crea.id = 'parrafo_alerta';
+                                        crea.style.margin = "0px";
+                                        
+                                        if(datos['res'] == 1){
+                                            
+                                            crea.innerText = datos['texto'];
+                                            crea.style.color = "red";
+                                            crea.style.marginTop = "11px"; 
+                                            alerta.append(crea);
+                                            
+                                            document.getElementById("bloquea").disabled = true;
+                                        }
+                                        else{
+                                            document.getElementById("bloquea").disabled = false;
+                                        }
+                                    }
+                                }
+                            };
+                        };
+    }
     
     Iniciar(){
 
@@ -118,6 +165,7 @@ class Tablero{
             }
         n++; 
         }
+        document.getElementById('padrebotones').innerHTML='<button class="estilo botonOtro" type="button"   onclick="location.reload();">Guardar y salir</button> ';
     }
 
     factoriaDePiezas(ficha){
@@ -138,7 +186,7 @@ class Tablero{
     mover(elemento){
         
         if(this.cambiofig == true){
-
+            
             this.cadena1 = elemento.id;
             this.caracter1 = this.cadena1.charAt(0);
             this.caracter2 = this.cadena1.charAt(2);
@@ -167,8 +215,7 @@ class Tablero{
                 let borrar1 = document.getElementById('turnoNegra');
                 if(borrar1 !== null)
                     borrar1.parentNode.removeChild(borrar1);
-                turnoB.innerHTML='<img id="turnoBlanca" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />';
-                
+                turnoB.innerHTML='<img id="turnoBlanca" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />'; 
             }
 
             if(this.turno == "N"){
@@ -196,9 +243,9 @@ class Tablero{
                     this.muertes(this.figuraselecc2[figuraMuerte],this.figuraselecc2.color);
 
                     this.casillas[this.caracter1][this.caracter2] = "";
-                    //console.log(this.seleccion);
-                    if(this.figuraselecc1 instanceof Peon && (this.caracter3 == 7 || this.caracter3 == 0)){ //promocionar peon
-                        console.log("peon llega al final");
+                    //console.log(this.figuraselecc2.nombre);
+                    if(this.figuraselecc1 instanceof Peon && (this.caracter3 == 7 || this.caracter3 == 0) && this.figuraselecc2.nombre != "Rey"){ //promocionar peon
+                        //console.log("peon llega al final");
                         
                             
                         let texto = document.createElement('div');
@@ -237,7 +284,7 @@ class Tablero{
                     else{    
                     this.casillas[this.caracter3][this.caracter4] = this.figuraselecc1; //mete el objeto
                     
-                    console.log(this.figuraselecc1);
+                    //console.log(this.figuraselecc1);
                     
                     this.borrar.innerHTML = '';
                     document.getElementById(this.cadena2).innerHTML='<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct + this.seleccion +'" />';
@@ -245,27 +292,22 @@ class Tablero{
 
                     this.cambiofig = true;
 
-                    if(this.blancasM.includes("reyB.png") || this.negrasM.includes("reyN.png")){
-                        
-                        
-                        let texto = document.createElement('div');
-                        texto.className = "emergente";
-                        texto.id = "emergente";
-                        texto.innerHTML = `<p>Victoria!!!</p>`;
-                        texto.innerHTML += '<img style="display: block; margin: auto; margin-top: 13px;" src="' + this.direct +`reina`+this.turno+`.png`+'" />';
-                        document.getElementById("promocion").appendChild(texto);
-
-                        document.getElementById('padrebotones').innerHTML='<button type="button"   onclick="location.reload();">Volver al menú</button> ';
-                        
-                         
-                    }
-
                     if(this.turno == "N"){
+                        this.jugadasN += 1;
+                        this.jugadasVictoria = this.jugadasN;
+                        //console.log("movimientos negras: " + this.jugadasN);
                         this.turno = "B";
                     }
-                    else{           
+                    else{      
+                        this.jugadasB += 1; 
+                        this.jugadasVictoria = this.jugadasB; 
+                        //console.log("movimientos blancas: " + this.jugadasB);   
                         this.turno = "N";
                     }
+
+                    this.muerterrey();
+
+                    
                         
                     //console.log(this.blancasM);
                     this.archivar();
@@ -273,6 +315,31 @@ class Tablero{
                     //this.Continuar();
                 }
             }
+        }
+    }
+    muerterrey(){
+        if(this.blancasM.includes("reyB.png") || this.negrasM.includes("reyN.png")){
+            let reina = "";
+
+            if(this.blancasM.includes("reyB.png") == true){
+                reina = "piezas/negras/reinaN.png";
+            }  
+            if(this.negrasM.includes("reyN.png") == true){
+                reina = "piezas/blancas/reinaB.png";
+            } 
+            let bloqueo = document.createElement('div');
+            bloqueo.id = "bloqueo";
+            document.getElementById("promocion").appendChild(bloqueo);
+
+            let texto = document.createElement('div');
+            texto.className = "emergente";
+            texto.id = "emergente";
+            texto.innerHTML = `<p>Victoria en `+this.jugadasVictoria+` movimientos</p>`;
+            texto.innerHTML += '<img style="display: block; margin: auto; margin-top: 13px;" src="' + reina +'" />';
+            document.getElementById("bloqueo").appendChild(texto);
+
+            document.getElementById('padrebotones').innerHTML='<button class="estilo botonOtro" type="button"   onclick="location.reload();">Volver al menú</button> ';
+            
         }
     }
 
@@ -306,7 +373,7 @@ class Tablero{
             }
         }
         
-        this.guardar = JSON.stringify({turno:this.turno, partida:almacenamiento, muertasB:this.blancasM, muertasN:this.negrasM}); //codificamos
+        this.guardar = JSON.stringify({vict:this.jugadasVictoria, movB: this.jugadasB, movN: this.jugadasN,turno:this.turno, partida:almacenamiento, muertasB:this.blancasM, muertasN:this.negrasM}); //codificamos
         //this.guardarnombre = JSON.stringify(this.nombrePartida);
        // console.log(this.guardarturno);
 
@@ -338,9 +405,9 @@ class Tablero{
                 if(this.responseText == ""){
                     let borrar1 = document.getElementById('buscarbd');
                     borrar1.parentNode.removeChild(borrar1);
-                    document.getElementById('padrebotones').innerHTML='<button type="button" id="start"  onclick="Inicializar.IntroducirNombre()">NEW GAME!</button> ';
-                    document.getElementById('padrebotones').innerHTML+=' <button type="button" id="continue"  onclick="Inicializar.BuscarPartida()">CONTINUE</button>';
-                    alert("Partida no encontrada");
+                    document.getElementById('padrebotones').innerHTML='<button class="estilo botoni" type="button" id="start"  onclick="Inicializar.IntroducirNombre()">NEW GAME!</button> ';
+                    document.getElementById('padrebotones').innerHTML+=' <button class="estilo botond" type="button" id="continue"  onclick="Inicializar.BuscarPartida()">CONTINUE</button>';
+                    document.getElementById('padrebotones').innerHTML+= '<p id="parrafo_alerta">Partida no encontrada</p>';
                     return false
                 }
             datos = JSON.parse(this.responseText);
@@ -349,8 +416,10 @@ class Tablero{
             //console.log(this.responseText);    
             objectoPrincipal.blancasM = datos.muertasB;
             objectoPrincipal.negrasM = datos.muertasN;
-
+            objectoPrincipal.jugadasB = datos.movB;
+            objectoPrincipal.jugadasN = datos.movN;
             objectoPrincipal.turno = datos.turno;
+            objectoPrincipal.jugadasVictoria = datos.vict;
             //datos.partida
             objectoPrincipal.casillas = [["","","","","","","",""],
                                          ["","","","","","","",""],
@@ -370,8 +439,9 @@ class Tablero{
         for(let muerta of datos.muertasB){
             muertasB.innerHTML+='<img style="display: block; margin: auto; margin-top: 13px;" src="piezas/blancas/'+ muerta +'" />';
         }
-        console.log(datos.partida);
+        //console.log(datos.partida);
         objectoPrincipal.ColocarPiezas();
+        objectoPrincipal.muerterrey();
         
             }   
         };
@@ -656,11 +726,11 @@ class Peon extends Piezas{
             let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
             let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
             let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
-
+            //console.log(color2);
             if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
                 return true
             }
-            if(posicion2 == posnew)
+            if(posicion2 == posnew && color2 == undefined)
                 return true;
             
             if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI))
