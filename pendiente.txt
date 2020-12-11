@@ -1,6 +1,0 @@
-boton juego nuevo
-pantalla fin juego muerte rey
-contar movimientos
-guardar y mostrar ultima pieza jugada
-ajax nombre partidas no permitir repetidas
-enrocar                        
