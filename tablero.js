@@ -226,7 +226,6 @@ class Tablero{
 
             
             document.getElementById(this.cadena1).style.boxShadow = "inset 0 0 15px 10px #d1615d";
-            
         }
         //console.log(figura);  
         else{
@@ -730,28 +729,16 @@ class Peon extends Piezas{
             let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
             let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
             let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
-            if(posIni == this.posIni){
-                document.getElementById(posnew).style.boxShadow = "inset 0 0 15px 10px #d1615d";
-                document.getElementById(posnew2).style.boxShadow = "inset 0 0 15px 10px #d1615d";
-            }
             
             //console.log(color2);
             if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
-                document.getElementById(posnew).style.boxShadow = "";
-                document.getElementById(posnew2).style.boxShadow = "";
                 return true
             }
-            if(posicion2 == posnew && color2 == undefined){
-            document.getElementById(posnew).style.boxShadow = "";
-            document.getElementById(posnew2).style.boxShadow = "";
+            if(posicion2 == posnew && color2 == undefined)
                 return true;
-            }
             
-            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI)){
-            document.getElementById(posnew).style.boxShadow = "";
-            document.getElementById(posnew2).style.boxShadow = "";
+            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI))
                 return true;
-            }
         }
 
 }
