@@ -3,7 +3,9 @@ Chess game made it with JS
 
 Steps to play it!
 
-1-Download Xampp
+1-Download Xampp:
+          
+          - https://xampp.uptodown.com/windows
 
 2-Put this files into xampp htdocs directoy
 
