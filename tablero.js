@@ -80,7 +80,7 @@ class Tablero{
         borrar2.parentNode.removeChild(borrar2);
 
         document.getElementById('padrebotones').innerHTML=`<form id="buscarbd" name="formulario" method="post">
-                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Insert match name" required autofocus >
+                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Insert game name" required autofocus >
                                                             <input class="estilo botonOtro" id="bloquea" type="button" value="START!" onclick="Inicializar.Iniciar()" >
                                                            </form>`;
         this.comprobarNombre();
@@ -95,7 +95,7 @@ class Tablero{
         borrar2.parentNode.removeChild(borrar2);
 
         document.getElementById('padrebotones').innerHTML=`<form  name="formulario" id="buscarbd" method="post">
-                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Search match" required autofocus >
+                                                            <input class="form__field" id="nombre" type="text" name="fname" placeholder="Find your game" required autofocus >
                                                             <input class="estilo botonOtro" id="bloquea" type="button" value="START!"  onclick="Inicializar.Continuar()" >
                                                            </form>`;
         //this.comprobarNombre();
@@ -124,7 +124,6 @@ class Tablero{
                                         if(datos['res'] == 1){
                                             
                                             crea.innerText = datos['texto'];
-                                            crea.style.color = "red";
                                             crea.style.marginTop = "11px"; 
                                             alerta.append(crea);
                                             
