@@ -15,7 +15,7 @@ Steps to play it!
 
           - cd c:\xampp\mysql\bin
           
-          - mysql -uroot -p --default_character_set utf8 < c:\xampp\htdocs\bd.sql
+          - mysql -uroot -p --default_character_set utf8 < c:\xampp\htdocs\Chess-master\bd.sql
           
 5-http://localhost/Chess-master/game.php
 
