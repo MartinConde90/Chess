@@ -7,7 +7,7 @@ Steps to play it!
           
           - https://xampp.uptodown.com/windows
 
-2-Put this files into xampp htdocs directoy
+2-Put this files into xampp/htdocs 
 
 3-Activate Apache and MySQL
 
