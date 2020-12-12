@@ -55,16 +55,16 @@ class Tablero{
             if(filas.includes(i)){
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="B" style="background-color: #bc7918" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" ></div>';
-                    tablero.innerHTML +='<div class="N" style="background-color: #551917" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="B"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" ></div>';
+                    tablero.innerHTML +='<div class="N"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
                     x--;
                 }
             }
             else{
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="N" style="background-color: #551917" id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
-                    tablero.innerHTML +='<div class="B" style="background-color: #bc7918" id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="N"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="B"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
                     x--;
                 }
             }
@@ -223,6 +223,10 @@ class Tablero{
                     borrar1.parentNode.removeChild(borrar1);
                 turnoN.innerHTML='<img id="turnoNegra" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />';
             }
+
+            
+            document.getElementById(this.cadena1).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+            this.casillas[this.caracter1][this.caracter2].movPos(this.cadena1,this.cadena2,this.figuraselecc2.color);
         }
         //console.log(figura);  
         else{
@@ -310,7 +314,7 @@ class Tablero{
                         
                     //console.log(this.blancasM);
                     this.archivar();
-                    
+                    document.getElementById(this.cadena1).style.boxShadow = "";
                     //this.Continuar();
                 }
             }
@@ -452,6 +456,7 @@ class Tablero{
         
         if(color1 == color2 ){
             this.cambiofig = true;
+            document.getElementById(this.cadena1).style.boxShadow = "";
             this.mover(this.segmov);
         }
         else
@@ -725,15 +730,27 @@ class Peon extends Piezas{
             let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
             let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
             let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
+            if(posIni == this.posIni){
+                document.getElementById(posnew).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                document.getElementById(posnew2).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+            }
             //console.log(color2);
             if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
+                document.getElementById(posnew).style.boxShadow = "";
+                document.getElementById(posnew2).style.boxShadow = "";
                 return true
             }
-            if(posicion2 == posnew && color2 == undefined)
+            if(posicion2 == posnew && color2 == undefined){
+            document.getElementById(posnew).style.boxShadow = "";
+            document.getElementById(posnew2).style.boxShadow = "";
                 return true;
+            }
             
-            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI))
+            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI)){
+            document.getElementById(posnew).style.boxShadow = "";
+            document.getElementById(posnew2).style.boxShadow = "";
                 return true;
+            }
         }
 
 }

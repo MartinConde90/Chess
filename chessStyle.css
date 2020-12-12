@@ -227,3 +227,23 @@ body{
 ::placeholder { /* Most modern browsers support this now. */
     color:   #eec301;
  }
+
+ input:-webkit-autofill,
+ input:-webkit-autofill:hover, 
+ input:-webkit-autofill:focus, 
+ input:-webkit-autofill:active  {
+   transition: background-color 5000s;
+   -webkit-text-fill-color: #38ef7d !important;
+ }
+
+.B{
+    background-color: #bc7918;
+    
+}
+.N{
+    background-color:#551917;
+    
+}
+
+
+
