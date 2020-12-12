@@ -734,6 +734,8 @@ class Peon extends Piezas{
                 document.getElementById(posnew).style.boxShadow = "inset 0 0 15px 10px #d1615d";
                 document.getElementById(posnew2).style.boxShadow = "inset 0 0 15px 10px #d1615d";
             }
+            if(posIni != this.posIni)
+                document.getElementById(posnew).style.boxShadow = "inset 0 0 15px 10px #d1615d";
             //console.log(color2);
             if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
                 document.getElementById(posnew).style.boxShadow = "";
