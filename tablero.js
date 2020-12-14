@@ -731,7 +731,10 @@ class Peon extends Piezas{
             let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
             
             //console.log(color2);
-            if(posIni == this.posIni && (posicion2 == posnew || posicion2 == posnew2)){
+            if(posIni == this.posIni && posicion2 == posnew && color2 == undefined){
+                return true
+            }
+            if(posIni == this.posIni && posicion2 == posnew2 && color2 == undefined){
                 return true
             }
             if(posicion2 == posnew && color2 == undefined)
