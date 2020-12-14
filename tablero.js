@@ -36,6 +36,9 @@ class Tablero{
 
         this.nombrePartida = "";
 
+        this.sumres = 1;
+        this.sumres2 = 2;
+
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
                         [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
                         ["","","","","","","",""],
@@ -182,6 +185,8 @@ class Tablero{
         return nuevaPieza;
 
     }
+
+    
     mover(elemento){
         
         if(this.cambiofig == true){
@@ -223,9 +228,13 @@ class Tablero{
                     borrar1.parentNode.removeChild(borrar1);
                 turnoN.innerHTML='<img id="turnoNegra" style="display: block; margin: auto; " src="' + this.direct + this.seleccion +'" />';
             }
-
+            
+            
             
             document.getElementById(this.cadena1).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+            
+            this.sombreo("colocar");
+            
         }
         //console.log(figura);  
         else{
@@ -308,16 +317,73 @@ class Tablero{
                     }
 
                     this.muerterrey();
-
-                    
-                        
                     //console.log(this.blancasM);
                     this.archivar();
                     document.getElementById(this.cadena1).style.boxShadow = "";
+                    this.sombreo("quitar");
                     //this.Continuar();
                 }
             }
         }
+    }
+
+    sombreo(accion){
+        if(this.figuraselecc1.nombre == "Peon"){
+            this.sumres = 1;
+            this.sumres2 = 2;
+            this.posIni = 1;
+            if(this.figuraselecc1.color == "N"){
+                this.sumres = -1;
+                this.sumres2 = -2;
+                this.posIni = 6;
+            }
+            let parte1 = (Number(this.caracter1)+this.sumres).toString()+ "-";
+            let posnew = parte1 + this.caracter2;
+            let posnew2 = (Number(this.caracter1)+this.sumres2).toString()+ "-"+ this.caracter2;
+            let posnewD = parte1 + (Number(this.caracter2)+1);
+            let posnewI = parte1 + (Number(this.caracter2)-1);
+            
+            if(accion == "colocar"){
+                //colores piezas casillas libres
+                this.color1 = this.casillas[(Number(this.caracter1)+this.sumres).toString()][this.caracter2].color;
+                if(Number(this.caracter1) >= 2 && this.figuraselecc1.color == "N")
+                    this.color2 = this.casillas[(Number(this.caracter1)+this.sumres2).toString()][this.caracter2].color;
+                if(Number(this.caracter1) <=5 && this.figuraselecc1.color == "B")
+                    this.color2 = this.casillas[(Number(this.caracter1)+this.sumres2).toString()][this.caracter2].color;
+
+                if(document.getElementById(posnewD) != null) //para ver si existe la casilla
+                    this.color3 = this.casillas[(Number(this.caracter1)+this.sumres).toString()][posnewD.slice(2,3)].color;
+                if(document.getElementById(posnewI) != null)
+                    this.color4 = this.casillas[(Number(this.caracter1)+this.sumres).toString()][posnewI.slice(2,3)].color;
+                //fin //colores piezas casillas libres
+
+                let colorP = "B";
+                if(this.figuraselecc1.color == "B")
+                    colorP = "N";
+                if(this.color1 == undefined)
+                        document.getElementById(posnew).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                if(this.caracter1 == this.posIni){
+                    if(this.color2 == undefined && this.color1 == undefined)
+                        document.getElementById(posnew2).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                }
+                if(this.color3 != undefined && this.color3 == colorP){
+                    document.getElementById(posnewD).style.boxShadow = "inset 0 0 15px 10px #d1615d";   
+                }
+                if(this.color4 != undefined && this.color4 == colorP)
+                    document.getElementById(posnewI).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+
+            }
+            if(accion == "quitar"){
+                document.getElementById(posnew).style.boxShadow = "";
+                if(document.getElementById(posnew2) != null)
+                    document.getElementById(posnew2).style.boxShadow = "";
+                if(document.getElementById(posnewD) != null)
+                    document.getElementById(posnewD).style.boxShadow = "";
+                if(document.getElementById(posnewI) != null)
+                    document.getElementById(posnewI).style.boxShadow = "";
+            }
+        }
+        
     }
     muerterrey(){
         if(this.blancasM.includes("reyB.png") || this.negrasM.includes("reyN.png")){
@@ -456,6 +522,7 @@ class Tablero{
         if(color1 == color2 ){
             this.cambiofig = true;
             document.getElementById(this.cadena1).style.boxShadow = "";
+            this.sombreo("quitar");
             this.mover(this.segmov);
         }
         else
@@ -475,8 +542,18 @@ class Tablero{
         let movdiag2 = y2+x2;
         let movdiag3 = y1-x1;
         let movdiag4 = y2-x2;
-
         let contadorCaballo = 0;
+
+        let ope = 1; //mov peon
+
+        if(this.figuraselecc1.nombre == "Peon"){     
+            if(this.figuraselecc1.color == "N")
+                ope = -1;
+            if(movlong1 == -2 || movlong1 == 2){
+                if(this.casillas[y1+ope][x2] != "")
+                    return false
+            } 
+        }
 
         if(this.seleccion.slice(0,-5) == "alfil" || this.seleccion.slice(0,-5) == "reina"){
             if(movdiag1 == movdiag2){
@@ -630,7 +707,7 @@ class Tablero{
                 return false
         }
 
-    return true;
+        return true;
     }
 
     muertes(figura,direct){
@@ -724,26 +801,27 @@ class Peon extends Piezas{
     }
 
     movPos(posicion1,posicion2,color2){
-            let posIni = posicion1.slice(0,1);
-            let posnew = (Number(posIni)+ this.desplazamiento + posicion1.slice(1,3));
-            let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
-            let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
-            let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
             
-            //console.log(color2);
-            if(posIni == this.posIni && posicion2 == posnew && color2 == undefined){
-                return true
-            }
-            if(posIni == this.posIni && posicion2 == posnew2 && color2 == undefined){
-                return true
-            }
-            if(posicion2 == posnew && color2 == undefined)
-                return true;
-            
-            if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI))
-                return true;
-        }
 
+        let posIni = posicion1.slice(0,1);
+        let posnew = (Number(posIni)+ this.desplazamiento + posicion1.slice(1,3));
+        let posnew2 = (Number(posIni)+ (this.desplazamiento * 2) + posicion1.slice(1,3));
+        let posnewD = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))+1);
+        let posnewI = (Number(posIni)+ this.desplazamiento) + '-' + (Number(posicion1.slice(2,3))-1);
+        
+        if(posIni == this.posIni && posicion2 == posnew && color2 == undefined){
+            return true 
+        }
+        if(posicion2 == posnew2 && color2 == undefined){
+            return true
+        }
+        if(posicion2 == posnew && color2 == undefined){
+            return true;
+        }
+        if(color2 == this.color2 && (posicion2 == posnewD || posicion2 == posnewI)){
+            return true;
+        }
+    }
 }
 
 class Torre extends Piezas{
