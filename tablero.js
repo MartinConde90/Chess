@@ -39,6 +39,8 @@ class Tablero{
         this.sumres = 1;
         this.sumres2 = 2;
 
+        this.arrayPosi = [];
+
         this.casillas = [[new Torre("B"),new Caballo("B"),new Alfil("B"),new Reina("B"),new Rey("B"),new Alfil("B"),new Caballo("B"),new Torre("B")],
                         [new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B"),new Peon("B")],
                         ["","","","","","","",""],
@@ -58,16 +60,16 @@ class Tablero{
             if(filas.includes(i)){
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="B"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" ></div>';
-                    tablero.innerHTML +='<div class="N"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="B"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)" > ' +(x*2+1) + '-' + (i-1) +' </div>';
+                    tablero.innerHTML +='<div class="N"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">' +  x*2 + '-' + (i-1) +'</div>';
                     x--;
                 }
             }
             else{
                 let x = 3;
                 while(x>=0){
-                    tablero.innerHTML +='<div class="N"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
-                    tablero.innerHTML +='<div class="B"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)"></div>';
+                    tablero.innerHTML +='<div class="N"  id="' +  (x*2+1) + '-' + (i-1) +'" onclick="Inicializar.mover(this)">' +  (x*2+1) + '-' + (i-1) +'</div>';
+                    tablero.innerHTML +='<div class="B"  id="' +  x*2 + '-' + (i-1) +'" onclick="Inicializar.mover(this)">' +  x*2 + '-' + (i-1) +'</div>';
                     x--;
                 }
             }
@@ -149,8 +151,7 @@ class Tablero{
 
         this.ColocarPiezas();
     }
-
-    
+ 
     ColocarPiezas(){
 
         let borrar = document.getElementById("buscarbd");
@@ -186,7 +187,6 @@ class Tablero{
 
     }
 
-    
     mover(elemento){
         
         if(this.cambiofig == true){
@@ -383,7 +383,182 @@ class Tablero{
                     document.getElementById(posnewI).style.boxShadow = "";
             }
         }
-        
+
+        if(this.figuraselecc1.nombre == "Torre" || this.figuraselecc1.nombre == "Reina"){
+            
+            let posicioniniY = Number(this.caracter1);
+            let posicioniniX = Number(this.caracter2);
+            
+            let posicionY = Number(this.caracter1);
+            let posicionX = Number(this.caracter2);
+
+            let id = "";
+            let movpos = 1;
+            
+
+            if(accion == "colocar"){
+                //arriba
+                while(posicionY < 7){
+                    posicionY += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                while(posicionY > 0){
+                    posicionY -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                while(posicionX < 7){
+                    posicionX += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionX = posicioniniX;
+                while(posicionX > 0){
+                    posicionX -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+
+            }
+
+            if(accion == "quitar"){
+                for(let i of this.arrayPosi){
+                    document.getElementById(i).style.boxShadow = "";
+                }
+                this.arrayPosi = [];
+            }
+            
+        }
+
+        if(this.figuraselecc1.nombre == "Alfil" || this.figuraselecc1.nombre == "Reina"){
+            let posicioniniY = Number(this.caracter1);
+            let posicioniniX = Number(this.caracter2);
+            
+            let posicionY = Number(this.caracter1);
+            let posicionX = Number(this.caracter2);
+            
+            let id = "";
+            let movpos = 1;
+            let posicionid = "";
+
+            if(accion == "colocar"){
+                
+                while(document.getElementById((posicionY+1) + "-" + (posicionX+1)) != null){
+                    posicionY += movpos;
+                    posicionX += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+                while(document.getElementById((posicionY+1) + "-" + (posicionX-1)) != null){
+                    posicionY += movpos;
+                    posicionX -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+                while(document.getElementById((posicionY-1) + "-" + (posicionX-1)) != null){
+                    posicionY -= movpos;
+                    posicionX -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+                while(document.getElementById((posicionY-1) + "-" + (posicionX+1)) != null){
+                    posicionY -= movpos;
+                    posicionX += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id);
+                        
+                    }
+                    if(this.casillas[posicionY][posicionX].nombre != undefined){
+                        break;
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+            }
+            if(accion == "quitar"){
+                for(let i of this.arrayPosi){
+                    document.getElementById(i).style.boxShadow = "";
+                }
+                this.arrayPosi = [];
+            }
+
+        }
     }
     muerterrey(){
         if(this.blancasM.includes("reyB.png") || this.negrasM.includes("reyN.png")){
