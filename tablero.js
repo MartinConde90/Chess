@@ -478,7 +478,7 @@ class Tablero{
             
             let id = "";
             let movpos = 1;
-            let posicionid = "";
+           
 
             if(accion == "colocar"){
                 
@@ -558,6 +558,143 @@ class Tablero{
                 this.arrayPosi = [];
             }
 
+        }
+
+        if(this.figuraselecc1.nombre == "Caballo"){
+            let posicioniniY = Number(this.caracter1);
+            let posicioniniX = Number(this.caracter2);
+            
+            let posicionY = Number(this.caracter1);
+            let posicionX = Number(this.caracter2);
+            
+            let id = "";
+            let movpos = 1;
+
+////////////////////////
+///////////////////
+///////////////////
+            if(accion == "colocar"){
+                if(document.getElementById((posicionY+2) + "-" + (posicionX+1))){
+                    posicionY += movpos*2;
+                    posicionX += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id); 
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+            
+                if(document.getElementById((posicionY+2) + "-" + (posicionX-1))){
+                    posicionY += movpos*2;
+                    posicionX -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id); 
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+                if(document.getElementById((posicionY-2) + "-" + (posicionX-1))){
+                    posicionY -= movpos*2;
+                    posicionX -= movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id); 
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+                if(document.getElementById((posicionY-2) + "-" + (posicionX+1))){
+                    posicionY -= movpos*2;
+                    posicionX += movpos;
+                    if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                        console.log(this.casillas[posicionY][posicionX].color);
+                        console.log(this.figuraselecc1.color);
+                        id = posicionY + '-' + posicionX;
+                        document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                        this.arrayPosi.push(id); 
+                    }
+                }
+                posicionY = posicioniniY;
+                posicionX = posicioniniX;
+               
+
+            //////////////////
+            /////////////////
+            /////////////////
+            if(document.getElementById((posicionY+1) + "-" + (posicionX+2))){
+                posicionY += movpos;
+                posicionX += movpos*2;
+                if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                    console.log(this.casillas[posicionY][posicionX].color);
+                    console.log(this.figuraselecc1.color);
+                    id = posicionY + '-' + posicionX;
+                    document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                    this.arrayPosi.push(id); 
+                }
+            }
+            posicionY = posicioniniY;
+            posicionX = posicioniniX;
+        
+            if(document.getElementById((posicionY-1) + "-" + (posicionX+2))){
+                posicionY -= movpos;
+                posicionX += movpos*2;
+                if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                    console.log(this.casillas[posicionY][posicionX].color);
+                    console.log(this.figuraselecc1.color);
+                    id = posicionY + '-' + posicionX;
+                    document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                    this.arrayPosi.push(id); 
+                }
+            }
+            posicionY = posicioniniY;
+            posicionX = posicioniniX;
+            if(document.getElementById((posicionY-1) + "-" + (posicionX-2))){
+                posicionY -= movpos;
+                posicionX -= movpos*2;
+                if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                    console.log(this.casillas[posicionY][posicionX].color);
+                    console.log(this.figuraselecc1.color);
+                    id = posicionY + '-' + posicionX;
+                    document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                    this.arrayPosi.push(id); 
+                }
+            }
+            posicionY = posicioniniY;
+            posicionX = posicioniniX;
+            if(document.getElementById((posicionY+1) + "-" + (posicionX-2))){
+                posicionY += movpos;
+                posicionX -= movpos*2;
+                if(this.casillas[posicionY][posicionX].nombre == undefined || this.casillas[posicionY][posicionX].color != this.figuraselecc1.color){
+                    console.log(this.casillas[posicionY][posicionX].color);
+                    console.log(this.figuraselecc1.color);
+                    id = posicionY + '-' + posicionX;
+                    document.getElementById(id).style.boxShadow = "inset 0 0 15px 10px #d1615d";
+                    this.arrayPosi.push(id); 
+                }
+            }
+            posicionY = posicioniniY;
+            posicionX = posicioniniX;
+        }   
+
+
+
+            if(accion == "quitar"){
+                for(let i of this.arrayPosi){
+                    document.getElementById(i).style.boxShadow = "";
+                }
+                this.arrayPosi = [];
+            }
         }
     }
     muerterrey(){
